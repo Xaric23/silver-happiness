@@ -1,0 +1,343 @@
+{
+  "chapters": {
+    "prologue": {
+      "name": "Prologue: The Forsaken Fortress",
+      "description": "Your journey begins in a crumbling fortress, forgotten by time but teeming with dark potential.",
+      "intro": "You stand before the crumbling gates of what was once a mighty fortress. Dark clouds gather overhead as you step into your new domain. The air is thick with ancient magic and decay. This place will be your seat of power... if you can tame it.",
+      "objectives": [
+        {
+          "id": "prologue_survive",
+          "type": "reach_day",
+          "description": "Survive your first 5 days in the fortress",
+          "target": 5
+        },
+        {
+          "id": "prologue_clear_slums",
+          "type": "clear_district",
+          "description": "Clear the rubble from The Slums",
+          "target": 100,
+          "data": { "districtName": "The Slums" }
+        },
+        {
+          "id": "prologue_first_room",
+          "type": "build_room",
+          "description": "Build your first room in the fortress",
+          "target": 1
+        }
+      ],
+      "events": [
+        {
+          "id": "prologue_arrival",
+          "title": "Arrival at the Forsaken Fortress",
+          "description": "You stand before the crumbling gates of what was once a mighty fortress. Dark clouds gather overhead as you step into your new domain. The air is thick with ancient magic and decay. This place will be your seat of power... if you can tame it.",
+          "triggerDay": 1
+        },
+        {
+          "id": "prologue_first_night",
+          "title": "The First Night",
+          "description": "As darkness falls on your first day, strange whispers echo through the halls. A shadowy figure appears before you, claiming to be a former servant of the fortress. They offer knowledge... for a price.",
+          "triggerDay": 2,
+          "choices": [
+            {
+              "text": "Accept their offer and learn the fortress secrets",
+              "outcome": { "corruption": 5, "arcaneEssence": 20, "reputation": -5 }
+            },
+            {
+              "text": "Refuse and drive them away",
+              "outcome": { "reputation": 5, "gold": -50 }
+            },
+            {
+              "text": "Attempt to capture and interrogate them",
+              "outcome": { "intrigue_check": true, "morale": -10 }
+            }
+          ]
+        },
+        {
+          "id": "prologue_discovery",
+          "title": "Hidden Chamber",
+          "description": "While clearing rubble, you discover a hidden chamber sealed by ancient wards. Inside, you find remnants of the fortress's dark past: forbidden texts, strange artifacts, and evidence of dark rituals performed here long ago.",
+          "triggerDay": 4,
+          "choices": [
+            {
+              "text": "Study the forbidden texts carefully",
+              "outcome": { "corruption": 10, "arcane": 2 }
+            },
+            {
+              "text": "Seal the chamber and forget what you saw",
+              "outcome": { "reputation": 10 }
+            },
+            {
+              "text": "Take the artifacts for your own use",
+              "outcome": { "gold": 100, "corruption": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    "act_1": {
+      "name": "Act I: Rise from Shadows",
+      "description": "Establish your power base and begin to expand your influence in the region.",
+      "intro": "The fortress is yours, but it is merely the beginning. Word of your presence spreads through the realm. Some see opportunity, others see threat. You must consolidate your power and prove you are more than just another would-be tyrant.",
+      "objectives": [
+        {
+          "id": "act1_expand",
+          "type": "build_room",
+          "description": "Expand your fortress with 3 different room types",
+          "target": 3
+        },
+        {
+          "id": "act1_reputation",
+          "type": "reach_reputation",
+          "description": "Reach 60 reputation to gain recognition",
+          "target": 60
+        },
+        {
+          "id": "act1_recruit",
+          "type": "recruit_npcs",
+          "description": "Recruit and maintain 8 NPCs in your faction",
+          "target": 8
+        },
+        {
+          "id": "act1_wealth",
+          "type": "accumulate_gold",
+          "description": "Accumulate 1000 gold to establish economic power",
+          "target": 1000
+        }
+      ],
+      "events": [
+        {
+          "id": "act1_rival_approaches",
+          "title": "A Rival's Message",
+          "description": "A messenger arrives bearing the seal of Lord Malachar, a powerful rival warlord who controls much of the region. His message is simple: bend the knee or be destroyed. He gives you one week to decide.",
+          "triggerDay": 10,
+          "choices": [
+            {
+              "text": "Send a defiant reply declaring your independence",
+              "outcome": { "reputation": 15, "conflict": true }
+            },
+            {
+              "text": "Feign submission while preparing your defenses",
+              "outcome": { "corruption": 5, "gold": 200 }
+            },
+            {
+              "text": "Seek an alliance of equals",
+              "outcome": { "reputation": -5, "gold": 150 }
+            }
+          ]
+        },
+        {
+          "id": "act1_merchant_guild",
+          "title": "The Merchant's Proposition",
+          "description": "Representatives from the Merchant Guild arrive with an offer. They will provide favorable trade terms and supplies... in exchange for protection of their caravans and 'discretion' about certain illegal activities.",
+          "triggerDay": 15,
+          "choices": [
+            {
+              "text": "Accept and benefit from their trade network",
+              "outcome": { "corruption": 10, "gold": 300 }
+            },
+            {
+              "text": "Refuse and maintain your independence",
+              "outcome": { "reputation": 10 }
+            },
+            {
+              "text": "Expose their illegal activities for political gain",
+              "outcome": { "reputation": 20, "gold": -100 }
+            }
+          ]
+        },
+        {
+          "id": "act1_transformation_offer",
+          "title": "The Sorceress's Gift",
+          "description": "A powerful sorceress visits your fortress, drawn by the dark energies emanating from your domain. She offers to enhance your powers through transformation magic, claiming it will make you stronger than any mortal foe.",
+          "triggerDay": 20,
+          "choices": [
+            {
+              "text": "Accept her gift and undergo transformation",
+              "outcome": { "corruption": 20, "arcaneEssence": 50, "transformation": true }
+            },
+            {
+              "text": "Decline but ask her to teach you the magic",
+              "outcome": { "arcane": 3, "gold": -200 }
+            },
+            {
+              "text": "Refuse and banish her from your lands",
+              "outcome": { "reputation": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    "act_2": {
+      "name": "Act II: Dark Ambitions",
+      "description": "Your power grows, but so do the challenges. Greater foes emerge, and you must make difficult choices.",
+      "intro": "Your fortress stands strong, and your reputation precedes you. But the realm is a dangerous place, and Lord Malachar grows impatient. War looms on the horizon, and darker forces stir in the shadows. The time for caution has passed.",
+      "objectives": [
+        {
+          "id": "act2_clear_all",
+          "type": "clear_district",
+          "description": "Clear all three districts of rubble",
+          "target": 3
+        },
+        {
+          "id": "act2_power",
+          "type": "reach_reputation",
+          "description": "Reach 80 reputation and become a major power",
+          "target": 80
+        },
+        {
+          "id": "act2_arcane_mastery",
+          "type": "complete_quest",
+          "description": "Complete 5 arcane or transformation encounters",
+          "target": 5,
+          "data": { "questType": "transformation" }
+        }
+      ],
+      "events": [
+        {
+          "id": "act2_war_begins",
+          "title": "The War Begins",
+          "description": "Lord Malachar's patience has ended. His armies march on your fortress. This is the moment you've been preparing for. Victory will establish you as a true power in the realm. Defeat means the end of everything you've built.",
+          "triggerDay": 30,
+          "choices": [
+            {
+              "text": "Meet them in open battle with all your forces",
+              "outcome": { "combat": true, "reputation": 20 }
+            },
+            {
+              "text": "Use guerrilla tactics and defensive positions",
+              "outcome": { "combat": true, "survival": 3 }
+            },
+            {
+              "text": "Unleash dark magic regardless of the consequences",
+              "outcome": { "combat": true, "corruption": 25, "arcane": 4 }
+            }
+          ]
+        },
+        {
+          "id": "act2_betrayal",
+          "title": "Betrayal in the Ranks",
+          "description": "One of your most trusted lieutenants has been secretly working for Lord Malachar. They've been feeding him information about your defenses and plans. You discover the betrayal just in time to act.",
+          "triggerDay": 35,
+          "choices": [
+            {
+              "text": "Execute them publicly as an example",
+              "outcome": { "morale": -20, "reputation": 10 }
+            },
+            {
+              "text": "Use them to feed false information to the enemy",
+              "outcome": { "intrigue": 3, "corruption": 10 }
+            },
+            {
+              "text": "Try to turn them back to your side",
+              "outcome": { "gold": -150, "morale": 5 }
+            }
+          ]
+        },
+        {
+          "id": "act2_ancient_power",
+          "title": "The Ancient Seal",
+          "description": "Deep beneath the fortress, you discover an ancient seal binding something powerful. The seal is weakening, and whatever lies beyond strains to break free. You can feel its power - immense, terrifying, and potentially yours to command.",
+          "triggerDay": 40,
+          "choices": [
+            {
+              "text": "Break the seal and claim the power within",
+              "outcome": { "corruption": 40, "arcane": 5, "dangerous": true }
+            },
+            {
+              "text": "Strengthen the seal and study it carefully",
+              "outcome": { "arcane": 2, "gold": -100 }
+            },
+            {
+              "text": "Leave it undisturbed and seal the chamber",
+              "outcome": { "reputation": 15 }
+            }
+          ]
+        }
+      ]
+    },
+    "act_3": {
+      "name": "Act III: The Final Confrontation",
+      "description": "The endgame approaches. Face Lord Malachar in a final showdown and determine the fate of the realm.",
+      "intro": "The war has taken its toll on both sides. Lord Malachar's forces are weakened but still formidable. Your fortress stands scarred but unbroken. The time has come for a final confrontation. Only one of you will survive to rule this land.",
+      "objectives": [
+        {
+          "id": "act3_dominance",
+          "type": "reach_reputation",
+          "description": "Achieve maximum reputation (100) and become legendary",
+          "target": 100
+        },
+        {
+          "id": "act3_final_battle",
+          "type": "defeat_enemy",
+          "description": "Defeat Lord Malachar in the final battle",
+          "target": 1,
+          "data": { "enemyName": "Lord Malachar" }
+        }
+      ],
+      "events": [
+        {
+          "id": "act3_final_offer",
+          "title": "Malachar's Final Offer",
+          "description": "Before the final battle, Lord Malachar sends one last message. He offers to split the realm between you, recognizing you as an equal. Together, you could rule unchallenged. But can you trust him?",
+          "triggerDay": 50,
+          "choices": [
+            {
+              "text": "Accept the offer and form an uneasy alliance",
+              "outcome": { "ending": "alliance" }
+            },
+            {
+              "text": "Reject and prepare for the final battle",
+              "outcome": { "reputation": 10, "final_battle": true }
+            },
+            {
+              "text": "Pretend to accept but plan his assassination",
+              "outcome": { "corruption": 30, "intrigue": 4, "assassination": true }
+            }
+          ]
+        },
+        {
+          "id": "act3_the_final_battle",
+          "title": "The Final Battle",
+          "description": "The armies clash. Magic tears through the battlefield. Blood soaks the earth. You face Lord Malachar himself in single combat, the fate of the realm hanging in the balance.",
+          "triggerDay": 55,
+          "choices": [
+            {
+              "text": "Fight with honor and skill",
+              "outcome": { "ending": "honorable_victory" }
+            },
+            {
+              "text": "Use every dark power at your disposal",
+              "outcome": { "ending": "dark_victory", "corruption": 50 }
+            },
+            {
+              "text": "Offer mercy at the last moment",
+              "outcome": { "ending": "merciful_victory", "reputation": 30 }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "endings": {
+    "alliance": {
+      "title": "The Dark Alliance",
+      "description": "You and Lord Malachar forge an uneasy alliance, dividing the realm between you. Together, you rule with iron fists, and none dare challenge your combined might. But you always sleep with one eye open, knowing that your ally could become your enemy at any moment."
+    },
+    "honorable_victory": {
+      "title": "The Noble Conqueror",
+      "description": "Through skill and determination, you defeat Lord Malachar in honorable combat. The realm acknowledges you as its rightful ruler. Your reign, though begun in darkness, shows promise of bringing stability and perhaps even justice to the land."
+    },
+    "dark_victory": {
+      "title": "The Dark Lord Ascendant",
+      "description": "You unleash the full extent of your dark powers, obliterating Lord Malachar and anyone who stands in your way. You rule through fear and dark magic, a true tyrant whose name will be whispered in terror for generations to come."
+    },
+    "merciful_victory": {
+      "title": "The Redeemed Ruler",
+      "description": "At the moment of victory, you show mercy to your fallen foe. This unexpected act transforms you from a dark warlord into a legend of a different kind - one of redemption and wisdom. Your reign ushers in an era of relative peace and prosperity."
+    },
+    "defeat": {
+      "title": "The Fallen Fortress",
+      "description": "Lord Malachar's forces overwhelm your defenses. Your fortress falls, and you are forced to flee or face capture. Your ambitions crumble to dust, and your name becomes a cautionary tale of overreaching ambition."
+    }
+  }
+}

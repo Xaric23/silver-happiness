@@ -110,6 +110,22 @@ export class MainMenu {
 
         console.log(`\nWelcome, ${playerName}, ${subspecies} ${species} leader of ${factionName}!`);
         console.log('\nYour dark reign begins...');
+        
+        // Show story intro for campaign mode
+        if (mode === GameMode.CAMPAIGN && gameData.storyInitialized) {
+            console.log('\n' + '='.repeat(60));
+            console.log('  CAMPAIGN MODE - STORY BEGINS');
+            console.log('='.repeat(60));
+            console.log();
+            console.log('You stand before the crumbling gates of what was once a mighty');
+            console.log('fortress. Dark clouds gather overhead as you step into your new');
+            console.log('domain. The air is thick with ancient magic and decay.');
+            console.log();
+            console.log('This place will be your seat of power... if you can tame it.');
+            console.log();
+            console.log('Your story begins in the Prologue: The Forsaken Fortress');
+        }
+        
         await prompt(this.rl, '\nPress Enter to continue...');
 
         // Show game menu
@@ -186,37 +202,75 @@ export class GameMenu {
             console.log('2. Manage Fort');
             console.log('3. View NPCs');
             console.log('4. View Quests');
-            console.log('5. Advance Day');
-            console.log('6. Save Game');
-            console.log('7. Return to Main Menu');
+            if (this.engine.gameMode === 'campaign' && this.engine.storyManager) {
+                console.log('5. View Story Progress');
+                console.log('6. Advance Day');
+                console.log('7. Save Game');
+                console.log('8. Return to Main Menu');
+            } else {
+                console.log('5. Advance Day');
+                console.log('6. Save Game');
+                console.log('7. Return to Main Menu');
+            }
             console.log();
 
             const choice = await prompt(this.rl, 'Choose an option: ');
 
-            switch (choice) {
-                case '1':
-                    await this.viewFactionStatus();
-                    break;
-                case '2':
-                    await this.manageFort();
-                    break;
-                case '3':
-                    await this.viewNPCs();
-                    break;
-                case '4':
-                    await this.viewQuests();
-                    break;
-                case '5':
-                    await this.advanceDay();
-                    break;
-                case '6':
-                    await this.saveGame();
-                    break;
-                case '7':
-                    return;
-                default:
-                    console.log('\nInvalid choice.');
-                    await prompt(this.rl, 'Press Enter to continue...');
+            if (this.engine.gameMode === 'campaign' && this.engine.storyManager) {
+                switch (choice) {
+                    case '1':
+                        await this.viewFactionStatus();
+                        break;
+                    case '2':
+                        await this.manageFort();
+                        break;
+                    case '3':
+                        await this.viewNPCs();
+                        break;
+                    case '4':
+                        await this.viewQuests();
+                        break;
+                    case '5':
+                        await this.viewStoryProgress();
+                        break;
+                    case '6':
+                        await this.advanceDay();
+                        break;
+                    case '7':
+                        await this.saveGame();
+                        break;
+                    case '8':
+                        return;
+                    default:
+                        console.log('\nInvalid choice.');
+                        await prompt(this.rl, 'Press Enter to continue...');
+                }
+            } else {
+                switch (choice) {
+                    case '1':
+                        await this.viewFactionStatus();
+                        break;
+                    case '2':
+                        await this.manageFort();
+                        break;
+                    case '3':
+                        await this.viewNPCs();
+                        break;
+                    case '4':
+                        await this.viewQuests();
+                        break;
+                    case '5':
+                        await this.advanceDay();
+                        break;
+                    case '6':
+                        await this.saveGame();
+                        break;
+                    case '7':
+                        return;
+                    default:
+                        console.log('\nInvalid choice.');
+                        await prompt(this.rl, 'Press Enter to continue...');
+                }
             }
         }
     }
@@ -576,6 +630,104 @@ export class GameMenu {
             });
         }
         
+        // Handle story progress and events (Campaign mode)
+        if (result.storyProgress) {
+            console.log('\n' + '='.repeat(60));
+            console.log('  STORY UPDATE');
+            console.log('='.repeat(60));
+            
+            // Check for chapter completion
+            if (result.storyProgress.chapterComplete) {
+                console.log(`\n🎉 Chapter Complete! 🎉`);
+                console.log(`You have finished: ${this._getChapterDisplayName(this.engine.storyManager.currentChapter)}`);
+                
+                if (result.storyProgress.gameComplete) {
+                    console.log('\n' + '='.repeat(60));
+                    console.log('  🏆 CAMPAIGN COMPLETE! 🏆');
+                    console.log('='.repeat(60));
+                    console.log();
+                    console.log('Congratulations! You have completed the story campaign.');
+                    console.log('Your dark reign is now legendary across the realm.');
+                    console.log();
+                    console.log('You may continue playing in sandbox mode, or start');
+                    console.log('a new campaign to experience different choices.');
+                } else {
+                    console.log(`\nNew chapter begins: ${result.storyProgress.chapterName}`);
+                }
+            }
+            
+            // Show objective progress
+            const anyIncomplete = result.storyProgress.objectives.some(obj => !obj.completed);
+            if (anyIncomplete) {
+                console.log('\nObjective Progress:');
+                result.storyProgress.objectives.forEach(obj => {
+                    if (!obj.completed) {
+                        const progressBar = this._createProgressBar(obj.progress, 15);
+                        console.log(`  ${obj.description}`);
+                        console.log(`  ${progressBar} ${obj.progress}%`);
+                    }
+                });
+            }
+        }
+        
+        // Handle story event
+        if (result.storyEvent) {
+            console.log('\n' + '='.repeat(60));
+            console.log('  STORY EVENT');
+            console.log('='.repeat(60));
+            console.log();
+            console.log(`📖 ${result.storyEvent.title}`);
+            console.log();
+            console.log(result.storyEvent.description);
+            
+            if (result.storyEvent.choices && result.storyEvent.choices.length > 0) {
+                console.log();
+                console.log('How do you respond?');
+                result.storyEvent.choices.forEach((choice, idx) => {
+                    console.log(`${idx + 1}. ${choice.text}`);
+                });
+                console.log();
+                
+                const choiceInput = await prompt(this.rl, 'Choose your action: ');
+                const choiceIdx = parseInt(choiceInput) - 1;
+                
+                if (choiceIdx >= 0 && choiceIdx < result.storyEvent.choices.length) {
+                    const outcome = this.engine.storyManager.triggerEvent(result.storyEvent.id, choiceIdx);
+                    
+                    if (outcome && outcome.effects) {
+                        console.log('\nConsequences:');
+                        const effects = outcome.effects;
+                        if (effects.corruption) {
+                            this.engine.faction.corruption = Math.min(100, this.engine.faction.corruption + effects.corruption);
+                            console.log(`  Corruption ${effects.corruption > 0 ? '+' : ''}${effects.corruption}`);
+                        }
+                        if (effects.reputation) {
+                            this.engine.faction.reputation = Math.max(0, Math.min(100, this.engine.faction.reputation + effects.reputation));
+                            console.log(`  Reputation ${effects.reputation > 0 ? '+' : ''}${effects.reputation}`);
+                        }
+                        if (effects.gold) {
+                            this.engine.faction.addGold(effects.gold);
+                            console.log(`  Gold ${effects.gold > 0 ? '+' : ''}${effects.gold}`);
+                        }
+                        if (effects.arcaneEssence) {
+                            this.engine.faction.resources.arcaneEssence += effects.arcaneEssence;
+                            console.log(`  Arcane Essence ${effects.arcaneEssence > 0 ? '+' : ''}${effects.arcaneEssence}`);
+                        }
+                        if (effects.morale) {
+                            this.engine.faction.morale = Math.max(0, Math.min(100, this.engine.faction.morale + effects.morale));
+                            console.log(`  Morale ${effects.morale > 0 ? '+' : ''}${effects.morale}`);
+                        }
+                    }
+                } else {
+                    // Default to first choice if invalid
+                    this.engine.storyManager.triggerEvent(result.storyEvent.id, 0);
+                }
+            } else {
+                // Event with no choices, just trigger it
+                this.engine.storyManager.triggerEvent(result.storyEvent.id);
+            }
+        }
+        
         if (result.events.length > 0) {
             console.log('\nEvents:');
             for (const event of result.events) {
@@ -695,6 +847,64 @@ export class GameMenu {
         }
         
         await prompt(this.rl, '\nPress Enter to continue...');
+    }
+
+    async viewStoryProgress() {
+        console.clear();
+        console.log('='.repeat(60));
+        console.log('  STORY PROGRESS');
+        console.log('='.repeat(60));
+        console.log();
+        
+        if (!this.engine.storyManager) {
+            console.log('Story mode is not active in this game.');
+            await prompt(this.rl, '\nPress Enter to continue...');
+            return;
+        }
+        
+        const progress = this.engine.storyManager.getProgressSummary();
+        
+        console.log(`Current Chapter: ${progress.chapterName}`);
+        console.log();
+        
+        if (progress.completedChapters.length > 0) {
+            console.log('Completed Chapters:');
+            progress.completedChapters.forEach(chapter => {
+                console.log(`  ✓ ${this._getChapterDisplayName(chapter)}`);
+            });
+            console.log();
+        }
+        
+        console.log('Current Objectives:');
+        if (progress.objectives.length === 0) {
+            console.log('  No active objectives. Congratulations on completing the story!');
+        } else {
+            progress.objectives.forEach((obj, idx) => {
+                const status = obj.completed ? '✓' : ' ';
+                const progressBar = this._createProgressBar(obj.progress, 20);
+                console.log(`  [${status}] ${obj.description}`);
+                console.log(`      ${progressBar} ${obj.progress}%`);
+            });
+        }
+        
+        console.log();
+        await prompt(this.rl, 'Press Enter to continue...');
+    }
+
+    _getChapterDisplayName(chapter) {
+        const names = {
+            'prologue': 'Prologue: The Forsaken Fortress',
+            'act_1': 'Act I: Rise from Shadows',
+            'act_2': 'Act II: Dark Ambitions',
+            'act_3': 'Act III: The Final Confrontation'
+        };
+        return names[chapter] || chapter;
+    }
+
+    _createProgressBar(percentage, width = 20) {
+        const filled = Math.floor((percentage / 100) * width);
+        const empty = width - filled;
+        return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
     }
 
     async saveGame() {

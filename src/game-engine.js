@@ -9,6 +9,7 @@ import { NPC } from './models/character.js';
 import { Faction } from './models/faction.js';
 import { QuestManager } from './models/quest.js';
 import { EncounterManager } from './systems/encounter.js';
+import { StoryManager } from './systems/story.js';
 
 export const GameMode = {
     SANDBOX: 'sandbox',
@@ -26,6 +27,7 @@ export class GameEngine {
         this.npcs = [];
         this.questManager = new QuestManager();
         this.encounterManager = new EncounterManager(this);
+        this.storyManager = null; // Initialized only for campaign mode
         this.currentDay = 1;
         this.isRunning = false;
     }
@@ -60,13 +62,20 @@ export class GameEngine {
             this.questManager.generateRandomQuest();
         }
         
+        // Initialize story mode if campaign
+        if (mode === GameMode.CAMPAIGN) {
+            this.storyManager = new StoryManager(this);
+            this.storyManager.initializeStory();
+        }
+        
         this.currentDay = 1;
         this.isRunning = true;
         
         return {
             player: this.player,
             faction: this.faction,
-            npcs: this.npcs
+            npcs: this.npcs,
+            storyInitialized: mode === GameMode.CAMPAIGN
         };
     }
 
@@ -107,11 +116,26 @@ export class GameEngine {
         // Update morale based on conditions
         this._updateMorale();
         
+        // Update story progress if campaign mode
+        let storyProgress = null;
+        let storyEvent = null;
+        if (this.gameMode === GameMode.CAMPAIGN && this.storyManager) {
+            const updated = this.storyManager.updateObjectives(this.getGameState());
+            if (updated) {
+                storyProgress = this.storyManager.getProgressSummary();
+            }
+            
+            // Check for story events
+            storyEvent = this.storyManager.getNextEvent();
+        }
+        
         return {
             day: this.currentDay,
             completedQuests,
             goldIncome,
-            events: this._generateRandomEvents()
+            events: this._generateRandomEvents(),
+            storyProgress,
+            storyEvent
         };
     }
 
@@ -201,6 +225,11 @@ export class GameEngine {
             isRunning: this.isRunning
         };
         
+        // Add story manager data if in campaign mode
+        if (this.gameMode === GameMode.CAMPAIGN && this.storyManager) {
+            saveData.storyManager = this.storyManager.toJSON();
+        }
+        
         const savePath = path.join(process.cwd(), 'saves', `${filename}.json`);
         await fs.writeFile(savePath, JSON.stringify(saveData, null, 2));
         
@@ -222,6 +251,11 @@ export class GameEngine {
         this.questManager = QuestManager.fromJSON(saveData.questManager, this.npcs);
         this.currentDay = saveData.currentDay;
         this.isRunning = saveData.isRunning;
+        
+        // Load story manager if in campaign mode
+        if (this.gameMode === GameMode.CAMPAIGN && saveData.storyManager) {
+            this.storyManager = StoryManager.fromJSON(saveData.storyManager, this);
+        }
         
         return true;
     }
