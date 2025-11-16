@@ -8,6 +8,7 @@ import { Character } from './models/character.js';
 import { NPC } from './models/character.js';
 import { Faction } from './models/faction.js';
 import { QuestManager } from './models/quest.js';
+import { EncounterManager } from './systems/encounter.js';
 
 export const GameMode = {
     SANDBOX: 'sandbox',
@@ -24,6 +25,7 @@ export class GameEngine {
         this.faction = null;
         this.npcs = [];
         this.questManager = new QuestManager();
+        this.encounterManager = new EncounterManager(this);
         this.currentDay = 1;
         this.isRunning = false;
     }
@@ -129,6 +131,16 @@ export class GameEngine {
     _generateRandomEvents() {
         const events = [];
         
+        // Check for encounters
+        const encounter = this.encounterManager.checkForEncounter();
+        if (encounter) {
+            events.push({
+                type: 'encounter',
+                encounter: encounter,
+                message: `You have an encounter with ${encounter.npc.name}, a ${encounter.npc.subspecies} ${encounter.npc.species}!`
+            });
+        }
+        
         // Random events based on game state
         if (Math.random() > 0.8) {
             const eventTypes = [
@@ -138,7 +150,10 @@ export class GameEngine {
                 'The local merchants offer a trade deal.',
                 'Strange magical phenomena occur in the arcane lab.'
             ];
-            events.push(eventTypes[Math.floor(Math.random() * eventTypes.length)]);
+            events.push({
+                type: 'story',
+                message: eventTypes[Math.floor(Math.random() * eventTypes.length)]
+            });
         }
         
         return events;

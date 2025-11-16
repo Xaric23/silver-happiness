@@ -13,13 +13,15 @@ export class CombatAction {
  * Combat encounter
  */
 export class Combat {
-    constructor(playerParty, enemyParty) {
+    constructor(playerParty, enemyParty, onDefeatTransformations = []) {
         this.playerParty = playerParty; // Array of characters
         this.enemyParty = enemyParty;
         this.turn = 0;
         this.combatLog = [];
         this.isActive = true;
         this.winner = null;
+        this.onDefeatTransformations = onDefeatTransformations; // Transformations applied if player loses
+        this.capturedCharacters = []; // Characters captured by enemies
     }
 
     /**
@@ -65,10 +67,217 @@ export class Combat {
             this.isActive = false;
             this.winner = 'enemy';
             this.combatLog.push('\nDefeat! Your party has been overwhelmed!');
-            return { finished: true, winner: 'enemy' };
+            
+            // Apply defeat consequences
+            const consequences = this._applyDefeatConsequences();
+            
+            return { 
+                finished: true, 
+                winner: 'enemy',
+                consequences: consequences
+            };
         }
 
         return { finished: false };
+    }
+
+    /**
+     * Apply consequences when player is defeated
+     */
+    _applyDefeatConsequences() {
+        const consequences = {
+            transformations: [],
+            captures: [],
+            corruptions: []
+        };
+
+        // Apply transformations to defeated characters
+        for (const character of this.playerParty) {
+            if (character.defeated && character.isPlayer) {
+                // Player character gets transformed by enemies
+                const transformation = this._generateDefeatTransformation();
+                if (transformation) {
+                    consequences.transformations.push({
+                        character: character,
+                        transformation: transformation,
+                        appliedBy: this.enemyParty[0] // The enemy who applied it
+                    });
+                    this.combatLog.push(`\n${character.name} is transformed by the enemy forces!`);
+                }
+            } else if (character.defeated) {
+                // NPCs might be captured
+                if (Math.random() > 0.5) {
+                    this.capturedCharacters.push(character);
+                    consequences.captures.push(character);
+                    this.combatLog.push(`\n${character.name} has been captured!`);
+                }
+            }
+
+            // Increase corruption from defeat
+            if (character.personality && character.personality.corruption !== undefined) {
+                const corruptionGain = Math.floor(Math.random() * 10) + 5;
+                character.personality.corruption = Math.min(100, character.personality.corruption + corruptionGain);
+                consequences.corruptions.push({
+                    character: character,
+                    amount: corruptionGain
+                });
+                this.combatLog.push(`\n${character.name} gains ${corruptionGain} corruption from the defeat.`);
+            }
+        }
+
+        return consequences;
+    }
+
+    /**
+     * Generate a transformation based on the enemies
+     */
+    _generateDefeatTransformation() {
+        // If specific transformations were set, use one randomly
+        if (this.onDefeatTransformations.length > 0) {
+            return this.onDefeatTransformations[Math.floor(Math.random() * this.onDefeatTransformations.length)];
+        }
+
+        // Otherwise generate based on enemy types
+        const enemy = this.enemyParty[0];
+        const transformations = this._getSpeciesTransformations(enemy.species, enemy.subspecies);
+        
+        if (transformations.length > 0) {
+            return transformations[Math.floor(Math.random() * transformations.length)];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get transformations based on enemy species
+     */
+    _getSpeciesTransformations(species, subspecies) {
+        const { Transformation } = this._getTransformationClass();
+        const transformations = [];
+
+        // Species-specific transformations
+        const speciesTransforms = {
+            'demon': [
+                new Transformation(
+                    'Demonic Corruption',
+                    'Dark energy corrupts your form, granting demonic features.',
+                    { brawn: 2, arcane: 2, seduction: 1 }
+                ),
+                new Transformation(
+                    'Succubus Curse',
+                    'You are cursed with insatiable desires.',
+                    { seduction: 3, intrigue: 1, brawn: -1 }
+                )
+            ],
+            'vampire': [
+                new Transformation(
+                    'Vampiric Thrall',
+                    'You become a thrall to vampiric powers.',
+                    { brawn: 1, survival: 2, seduction: 1 }
+                ),
+                new Transformation(
+                    'Blood Addiction',
+                    'A craving for blood overwhelms you.',
+                    { brawn: 2, survival: 1, arcane: 1 }
+                )
+            ],
+            'shapeshifter': [
+                new Transformation(
+                    'Forced Shift',
+                    'Your form is forcibly altered to beast-like features.',
+                    { brawn: 2, survival: 2, intrigue: -1 }
+                ),
+                new Transformation(
+                    'Feral Curse',
+                    'Wild instincts begin to dominate your mind.',
+                    { brawn: 3, survival: 1, arcane: -1 }
+                )
+            ],
+            'fae': [
+                new Transformation(
+                    'Fae Enchantment',
+                    'Fae magic weaves into your being.',
+                    { arcane: 2, seduction: 2, intrigue: 1 }
+                ),
+                new Transformation(
+                    'Glamour Binding',
+                    'You are bound by fae glamour.',
+                    { seduction: 3, intrigue: 2 }
+                )
+            ],
+            'undead': [
+                new Transformation(
+                    'Undeath Touch',
+                    'The touch of undeath leaves its mark.',
+                    { survival: 3, arcane: 2, seduction: -2 }
+                ),
+                new Transformation(
+                    'Necrotic Curse',
+                    'Necrotic energy courses through you.',
+                    { arcane: 3, survival: 2, brawn: -1 }
+                )
+            ],
+            'dragon-born': [
+                new Transformation(
+                    'Draconic Binding',
+                    'Dragon magic alters your essence.',
+                    { brawn: 2, arcane: 2, survival: 1 }
+                )
+            ],
+            'elf': [
+                new Transformation(
+                    'Elven Enchantment',
+                    'Elven magic subtly changes you.',
+                    { arcane: 2, intrigue: 1, seduction: 1 }
+                )
+            ],
+            'angel': [
+                new Transformation(
+                    'Divine Binding',
+                    'Divine power marks your soul.',
+                    { arcane: 2, seduction: 1 }
+                )
+            ],
+            'beast-kin': [
+                new Transformation(
+                    'Bestial Influence',
+                    'Animal instincts become stronger.',
+                    { brawn: 2, survival: 2 }
+                )
+            ]
+        };
+
+        const speciesArray = speciesTransforms[species] || [];
+        transformations.push(...speciesArray);
+
+        // Add a generic transformation as fallback
+        if (transformations.length === 0) {
+            transformations.push(
+                new Transformation(
+                    'Defeated Mark',
+                    'The defeat leaves a lasting mark on your body and soul.',
+                    { corruption: 5 }
+                )
+            );
+        }
+
+        return transformations;
+    }
+
+    /**
+     * Helper to get Transformation class (avoids circular dependency)
+     */
+    _getTransformationClass() {
+        // In actual implementation, this would import from character.js
+        // For now, return a basic implementation
+        class Transformation {
+            constructor(name, description, statModifiers) {
+                this.name = name;
+                this.description = description;
+                this.statModifiers = statModifiers;
+            }
+        }
+        return { Transformation };
     }
 
     _executeAction(attacker, target, action, isPlayer) {

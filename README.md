@@ -30,6 +30,21 @@ A text-based management RPG that fuses elements of dark fantasy, faction managem
   - Reputation and influence systems
   - Morale and corruption mechanics
 
+- **Transformation System**:
+  - Combat defeat transformations
+  - Species-specific transformations (61 unique types)
+  - Random encounters with transformation risks
+  - Permanent stat modifications
+  - Corruption and personality changes
+  - NPC transformation on victory
+
+- **Encounter System**:
+  - Random daily encounters
+  - Combat, Social, Magical, Trap, and Ambush types
+  - Success/failure with consequences
+  - Transformation risks based on difficulty
+  - Relationship changes with NPCs
+
 - **Game Modes**:
   - **Sandbox Mode**: Open-ended gameplay focused on faction growth
   - **Campaign Mode**: Structured quest lines with progression goals
@@ -123,13 +138,21 @@ ISC
 
 This is a community-driven project. Feel free to submit issues and pull requests!
 
+## Documentation
+
+- **[README.md](README.md)** - Main documentation (you are here)
+- **[QUICKSTART.md](QUICKSTART.md)** - Getting started guide
+- **[SPECIES_GUIDE.md](SPECIES_GUIDE.md)** - Complete species and subspecies reference
+- **[TRANSFORMATION_GUIDE.md](TRANSFORMATION_GUIDE.md)** - Transformation and defeat mechanics
+
 ## Roadmap
 
 Future features planned:
 - [ ] More quest types and variety
-- [ ] Expanded transformation system
+- [ ] Voluntary transformations via Arcane Labs
+- [ ] Transformation reversal system
 - [ ] Campaign mode story content
-- [ ] Combat refinements
+- [ ] Combat refinements and combat viewer
 - [ ] Additional room types
 - [ ] Relationship system expansion
 - [ ] Mod support

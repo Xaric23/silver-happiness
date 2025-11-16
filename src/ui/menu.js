@@ -562,13 +562,107 @@ export class GameMenu {
         
         if (result.events.length > 0) {
             console.log('\nEvents:');
-            result.events.forEach(event => {
-                console.log(`- ${event}`);
-            });
+            for (const event of result.events) {
+                if (event.type === 'encounter') {
+                    console.log(`\n! ${event.message}`);
+                    await this.handleEncounter(event.encounter);
+                } else {
+                    console.log(`- ${event.message}`);
+                }
+            }
         }
         
         console.log();
         await prompt(this.rl, 'Press Enter to continue...');
+    }
+
+    async handleEncounter(encounter) {
+        console.log('\n' + '='.repeat(60));
+        console.log(`  ENCOUNTER: ${encounter.type.toUpperCase()}`);
+        console.log('='.repeat(60));
+        console.log();
+        console.log(`${encounter.npc.name} (${encounter.npc.subspecies} ${encounter.npc.species})`);
+        console.log(`Difficulty: ${encounter.difficulty}/10`);
+        console.log(`Transformation Risk: ${Math.floor(encounter.transformationRisk)}%`);
+        console.log();
+        console.log('Choose your action:');
+        console.log('1. Fight');
+        console.log('2. Talk');
+        console.log('3. Use Magic');
+        console.log('4. Try to Escape');
+        console.log();
+
+        const choice = await prompt(this.rl, 'Choice: ');
+        
+        // Resolve encounter
+        const result = encounter.resolve(this.engine.player, choice);
+        
+        console.log('\n' + result.message);
+        
+        if (result.success) {
+            console.log('\nSuccess!');
+            if (result.rewards) {
+                console.log(`Rewards:`);
+                if (result.rewards.gold) {
+                    console.log(`  +${result.rewards.gold} gold`);
+                    this.engine.faction.addGold(result.rewards.gold);
+                }
+                if (result.rewards.reputation) {
+                    console.log(`  +${result.rewards.reputation} reputation`);
+                    this.engine.faction.reputation = Math.min(100, this.engine.faction.reputation + result.rewards.reputation);
+                }
+            }
+            
+            if (result.npcTransformed) {
+                console.log(`\nYou dominate ${encounter.npc.name}!`);
+                console.log(`${result.npcTransformation.description}`);
+                encounter.npc.applyTransformation(result.npcTransformation);
+            }
+            
+            // Improve relationship
+            encounter.npc.relationshipPlayer += result.relationshipChange;
+        } else {
+            console.log('\nDefeat...');
+            
+            if (result.penalties) {
+                console.log(`Penalties:`);
+                if (result.penalties.gold) {
+                    console.log(`  -${result.penalties.gold} gold`);
+                    this.engine.faction.gold = Math.max(0, this.engine.faction.gold - result.penalties.gold);
+                }
+                if (result.penalties.reputation) {
+                    console.log(`  -${result.penalties.reputation} reputation`);
+                    this.engine.faction.reputation = Math.max(0, this.engine.faction.reputation - result.penalties.reputation);
+                }
+                if (result.penalties.morale) {
+                    console.log(`  -${result.penalties.morale} morale`);
+                    this.engine.faction.morale = Math.max(0, this.engine.faction.morale - result.penalties.morale);
+                }
+            }
+            
+            if (result.corruptionGain) {
+                console.log(`\n+${result.corruptionGain} corruption`);
+            }
+            
+            if (result.transformed) {
+                console.log('\n*** YOU HAVE BEEN TRANSFORMED! ***');
+                console.log(`Transformation: ${result.transformation.name}`);
+                console.log(`Effect: ${result.transformation.description}`);
+                console.log('\nYour stats have changed:');
+                for (const [stat, modifier] of Object.entries(result.transformation.statModifiers)) {
+                    if (modifier > 0) {
+                        console.log(`  ${stat}: +${modifier}`);
+                    } else if (modifier < 0) {
+                        console.log(`  ${stat}: ${modifier}`);
+                    }
+                }
+            }
+            
+            // Worsen relationship
+            encounter.npc.relationshipPlayer += result.relationshipChange;
+        }
+        
+        await prompt(this.rl, '\nPress Enter to continue...');
     }
 
     async saveGame() {
