@@ -54,8 +54,13 @@ A text-based management RPG that fuses elements of dark fantasy, faction managem
   - Relationship changes with NPCs
 
 - **Game Modes**:
-  - **Sandbox Mode**: Open-ended gameplay focused on faction growth
-  - **Campaign Mode**: Structured quest lines with progression goals
+  - **Sandbox Mode**: Open-ended gameplay focused on faction growth and experimentation
+  - **Story Mode (Campaign)**: Narrative-driven experience with chapters, objectives, and branching storylines
+    - 4 Acts: Prologue, Act I, Act II, and Act III
+    - Story objectives tracking your progress
+    - Character-driven events with meaningful choices
+    - Multiple endings based on your decisions
+    - Integrated with all core game mechanics
 
 ## Installation
 
@@ -155,13 +160,38 @@ This is a community-driven project. Feel free to submit issues and pull requests
 - **[BODY_PARTS_GUIDE.md](BODY_PARTS_GUIDE.md)** - Physical body part transformations catalog (50+ parts)
 - **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Complete feature list and project summary
 
+## Story Mode (Campaign)
+
+The game features a fully implemented story mode with:
+
+### Structure
+- **Prologue**: The Forsaken Fortress - Establish your base and survive your first days
+- **Act I**: Rise from Shadows - Build your power and face your first rival
+- **Act II**: Dark Ambitions - Wage war and make difficult moral choices
+- **Act III**: The Final Confrontation - Face Lord Malachar in an epic finale
+
+### Features
+- **Story Objectives**: Track your progress through clear, measurable goals
+- **Branching Narrative**: Your choices affect the story and lead to different outcomes
+- **Multiple Endings**: 4+ different endings based on your decisions throughout the campaign
+- **Character-Driven Events**: Meet interesting characters and make impactful decisions
+- **Integrated Gameplay**: Story mode uses all existing mechanics (combat, quests, transformation, etc.)
+
+### Playing Story Mode
+1. Select "New Game (Campaign Mode)" from the main menu
+2. Complete objectives to progress through chapters
+3. Make choices in story events that shape your character and the world
+4. View your progress anytime through the "View Story Progress" menu
+5. Experience unique narrative content while enjoying all core game features
+
 ## Roadmap
 
 Future features planned:
+- [x] Story mode with chapters and branching narratives
 - [ ] More quest types and variety
 - [ ] Voluntary transformations via Arcane Labs
 - [ ] Transformation reversal system
-- [ ] Campaign mode story content
+- [ ] Additional story mode content and side stories
 - [ ] Combat refinements and combat viewer
 - [ ] Additional room types
 - [ ] Relationship system expansion

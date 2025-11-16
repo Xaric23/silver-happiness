@@ -5,10 +5,27 @@
 When you start the game for the first time, you'll be presented with the main menu:
 
 1. **New Game (Sandbox Mode)** - Free-form gameplay with no restrictions
-2. **New Game (Campaign Mode)** - Story-driven experience (coming soon)
+2. **New Game (Campaign Mode)** - Story-driven experience with chapters and objectives
 3. **Load Game** - Continue a saved game
 4. **About** - Learn about the game
 5. **Exit** - Quit the game
+
+### Choosing Your Mode
+
+**Sandbox Mode** is perfect if you want to:
+- Experiment with game mechanics freely
+- Build your ideal fortress without constraints
+- Focus on optimization and strategy
+- Create your own narrative
+
+**Story Mode (Campaign)** is ideal if you want:
+- A structured narrative experience
+- Clear objectives and goals
+- Character-driven events and choices
+- Multiple endings based on your decisions
+- A guided introduction to the game's features
+
+See the [STORY_MODE_GUIDE.md](STORY_MODE_GUIDE.md) for complete story mode documentation.
 
 ## Creating Your Character
 
