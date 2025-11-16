@@ -3,6 +3,7 @@
  */
 
 import { Transformation } from '../models/character.js';
+import { generateRandomBodyPart, getBodyPartsForSpecies } from '../models/body-parts.js';
 
 export const EncounterType = {
     COMBAT: 'combat',
@@ -119,16 +120,22 @@ export class Encounter {
         // Apply corruption
         playerCharacter.adjustPersonality('corruption', result.corruptionGain);
 
-        // Check if transformation occurs
+        // Check if body part transformation occurs
         const transformRoll = Math.random() * 100;
         if (transformRoll < this.transformationRisk) {
             result.transformed = true;
-            result.transformation = this._generateTransformation();
+            result.bodyPart = generateRandomBodyPart(this.npc.species, this.npc.subspecies);
             
-            // Apply the transformation
-            playerCharacter.applyTransformation(result.transformation);
-            
-            result.message += `\n\n${this.npc.name} transforms you! ${result.transformation.description}`;
+            if (result.bodyPart) {
+                // Apply the body part transformation
+                playerCharacter.addBodyPart(result.bodyPart);
+                result.message += `\n\n${this.npc.name} transforms you! ${result.bodyPart.description}`;
+            } else {
+                // Fallback to old transformation
+                result.transformation = this._generateTransformation();
+                playerCharacter.applyTransformation(result.transformation);
+                result.message += `\n\n${this.npc.name} transforms you! ${result.transformation.description}`;
+            }
         }
 
         // Adjust personality based on encounter type

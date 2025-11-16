@@ -137,8 +137,21 @@ export class Combat {
             return this.onDefeatTransformations[Math.floor(Math.random() * this.onDefeatTransformations.length)];
         }
 
-        // Otherwise generate based on enemy types
+        // Otherwise try to generate a body part transformation
         const enemy = this.enemyParty[0];
+        
+        // Try to import body parts (dynamic import to avoid circular dependency)
+        try {
+            const { generateRandomBodyPart } = this._getBodyPartGenerator();
+            const bodyPart = generateRandomBodyPart(enemy.species, enemy.subspecies);
+            if (bodyPart) {
+                return { isBodyPart: true, data: bodyPart };
+            }
+        } catch (e) {
+            // Fall back to old system
+        }
+
+        // Fallback to old transformation system
         const transformations = this._getSpeciesTransformations(enemy.species, enemy.subspecies);
         
         if (transformations.length > 0) {
@@ -146,6 +159,16 @@ export class Combat {
         }
 
         return null;
+    }
+
+    /**
+     * Helper to get body part generator (avoids circular dependency)
+     */
+    _getBodyPartGenerator() {
+        // In actual implementation, this would import from body-parts.js
+        return {
+            generateRandomBodyPart: () => null
+        };
     }
 
     /**

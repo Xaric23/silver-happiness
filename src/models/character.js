@@ -3,6 +3,7 @@
  */
 
 import { randomUUID } from 'crypto';
+import { BodyPartCollection } from './body-parts.js';
 
 export const Gender = {
     MALE: 'male',
@@ -207,6 +208,7 @@ export class Character {
         this.stats = new CharacterStats();
         this._applySpeciesModifiers();
         this.transformations = [];
+        this.bodyParts = new BodyPartCollection(); // Track physical body part transformations
         this.appearance = {
             height: 'average',
             build: 'average',
@@ -299,6 +301,30 @@ export class Character {
     }
 
     /**
+     * Add a body part transformation
+     */
+    addBodyPart(bodyPart) {
+        this.bodyParts.addPart(bodyPart);
+        
+        // Apply stat modifiers from body part
+        for (const [stat, modifier] of Object.entries(bodyPart.statModifiers)) {
+            if (this.stats[stat] !== undefined) {
+                this.stats[stat] += modifier;
+            }
+        }
+        
+        // Update appearance description
+        this.appearance.bodyParts = this.bodyParts.getDescription();
+    }
+
+    /**
+     * Get all body parts
+     */
+    getAllBodyParts() {
+        return this.bodyParts.getAllParts();
+    }
+
+    /**
      * Get stat value including all modifiers
      */
     getEffectiveStat(statName) {
@@ -332,6 +358,7 @@ export class Character {
             subspecies: this.subspecies,
             stats: this.stats.toJSON(),
             transformations: this.transformations.map(t => t.toJSON()),
+            bodyParts: this.bodyParts.toJSON(),
             appearance: this.appearance,
             personality: this.personality,
             isPlayer: this.isPlayer
@@ -343,6 +370,7 @@ export class Character {
         char.id = data.id;
         char.stats = CharacterStats.fromJSON(data.stats);
         char.transformations = data.transformations.map(t => Transformation.fromJSON(t));
+        char.bodyParts = data.bodyParts ? BodyPartCollection.fromJSON(data.bodyParts) : new BodyPartCollection();
         char.appearance = data.appearance;
         char.personality = data.personality;
         char.isPlayer = data.isPlayer || false;

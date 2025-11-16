@@ -439,9 +439,25 @@ export class GameMenu {
             console.log();
             console.log(`Relationship with player: ${npc.relationshipPlayer}`);
             
+            // Show body parts
+            const bodyParts = npc.getAllBodyParts();
+            if (bodyParts.length > 0) {
+                console.log();
+                console.log('Body Parts:');
+                bodyParts.forEach(part => {
+                    console.log(`  - ${part.name} (${part.type}): ${part.description}`);
+                    const statStr = Object.entries(part.statModifiers)
+                        .map(([stat, val]) => `${stat} ${val > 0 ? '+' : ''}${val}`)
+                        .join(', ');
+                    if (statStr) {
+                        console.log(`    Stats: ${statStr}`);
+                    }
+                });
+            }
+            
             if (npc.transformations.length > 0) {
                 console.log();
-                console.log('Transformations:');
+                console.log('Other Transformations:');
                 npc.transformations.forEach(t => {
                     console.log(`  - ${t.name}: ${t.description}`);
                 });
@@ -646,14 +662,30 @@ export class GameMenu {
             
             if (result.transformed) {
                 console.log('\n*** YOU HAVE BEEN TRANSFORMED! ***');
-                console.log(`Transformation: ${result.transformation.name}`);
-                console.log(`Effect: ${result.transformation.description}`);
-                console.log('\nYour stats have changed:');
-                for (const [stat, modifier] of Object.entries(result.transformation.statModifiers)) {
-                    if (modifier > 0) {
-                        console.log(`  ${stat}: +${modifier}`);
-                    } else if (modifier < 0) {
-                        console.log(`  ${stat}: ${modifier}`);
+                
+                if (result.bodyPart) {
+                    console.log(`\nNew Body Part: ${result.bodyPart.name}`);
+                    console.log(`Type: ${result.bodyPart.type}`);
+                    console.log(`Effect: ${result.bodyPart.description}`);
+                    console.log(`Appearance: ${result.bodyPart.appearance}`);
+                    console.log('\nYour stats have changed:');
+                    for (const [stat, modifier] of Object.entries(result.bodyPart.statModifiers)) {
+                        if (modifier > 0) {
+                            console.log(`  ${stat}: +${modifier}`);
+                        } else if (modifier < 0) {
+                            console.log(`  ${stat}: ${modifier}`);
+                        }
+                    }
+                } else if (result.transformation) {
+                    console.log(`Transformation: ${result.transformation.name}`);
+                    console.log(`Effect: ${result.transformation.description}`);
+                    console.log('\nYour stats have changed:');
+                    for (const [stat, modifier] of Object.entries(result.transformation.statModifiers)) {
+                        if (modifier > 0) {
+                            console.log(`  ${stat}: +${modifier}`);
+                        } else if (modifier < 0) {
+                            console.log(`  ${stat}: ${modifier}`);
+                        }
                     }
                 }
             }
