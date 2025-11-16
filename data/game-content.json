@@ -1,0 +1,155 @@
+{
+  "transformations": [
+    {
+      "id": "demonic_empowerment",
+      "name": "Demonic Empowerment",
+      "description": "Dark magic infuses the body, granting increased power at the cost of corruption.",
+      "statModifiers": {
+        "brawn": 3,
+        "arcane": 2,
+        "seduction": 1
+      },
+      "corruptionCost": 15
+    },
+    {
+      "id": "feline_grace",
+      "name": "Feline Grace",
+      "description": "Transform into a cat-like being with enhanced agility and charm.",
+      "statModifiers": {
+        "intrigue": 2,
+        "survival": 2,
+        "seduction": 2
+      },
+      "corruptionCost": 5
+    },
+    {
+      "id": "arcane_awakening",
+      "name": "Arcane Awakening",
+      "description": "Unlock dormant magical potential through ritual transformation.",
+      "statModifiers": {
+        "arcane": 4,
+        "brawn": -1
+      },
+      "corruptionCost": 10
+    },
+    {
+      "id": "succubus_kiss",
+      "name": "Succubus Kiss",
+      "description": "Embrace the allure of a succubus, becoming irresistible.",
+      "statModifiers": {
+        "seduction": 5,
+        "intrigue": 1
+      },
+      "corruptionCost": 20
+    },
+    {
+      "id": "berserker_rage",
+      "name": "Berserker Rage",
+      "description": "Channel primal fury into raw physical might.",
+      "statModifiers": {
+        "brawn": 5,
+        "survival": 2,
+        "intrigue": -2
+      },
+      "corruptionCost": 8
+    }
+  ],
+  "events": [
+    {
+      "id": "merchant_caravan",
+      "title": "Merchant Caravan Arrives",
+      "description": "A traveling merchant offers rare goods for sale.",
+      "effects": {
+        "options": [
+          {
+            "text": "Purchase rare materials (100 gold)",
+            "cost": { "gold": 100 },
+            "reward": { "materials": 30 }
+          },
+          {
+            "text": "Trade food for arcane essence",
+            "cost": { "food": 50 },
+            "reward": { "arcaneEssence": 20 }
+          },
+          {
+            "text": "Decline",
+            "cost": {},
+            "reward": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "rival_attack",
+      "title": "Rival Faction Attack",
+      "description": "A rival faction launches a surprise attack on your fort!",
+      "effects": {
+        "combatTrigger": true,
+        "enemyCount": 3
+      }
+    },
+    {
+      "id": "magical_anomaly",
+      "title": "Magical Anomaly",
+      "description": "Strange energies surge through the arcane lab.",
+      "effects": {
+        "transformationChance": true,
+        "arcaneEssenceGain": 15
+      }
+    },
+    {
+      "id": "slave_revolt",
+      "title": "Unrest in the Pens",
+      "description": "Low morale leads to unrest among your captives.",
+      "effects": {
+        "moraleCheck": true,
+        "moraleLoss": 10
+      }
+    },
+    {
+      "id": "noble_visitor",
+      "title": "Noble Visitor",
+      "description": "A powerful noble wishes to inspect your operations.",
+      "effects": {
+        "reputationCheck": true,
+        "options": [
+          {
+            "text": "Impress them (requires 70+ reputation)",
+            "requirement": { "reputation": 70 },
+            "reward": { "gold": 200, "influence": 5 }
+          },
+          {
+            "text": "Seduce them",
+            "requirement": { "seduction": 7 },
+            "reward": { "reputation": 15 }
+          }
+        ]
+      }
+    }
+  ],
+  "initialNames": {
+    "male": [
+      "Draven", "Kael", "Sylas", "Thorn", "Vex", "Zane", "Ash", "Raven",
+      "Malric", "Corvus", "Dante", "Lucian", "Magnus", "Thane", "Cain"
+    ],
+    "female": [
+      "Aria", "Luna", "Zara", "Nyx", "Seraphina", "Lilith", "Morgana",
+      "Selene", "Raven", "Echo", "Vesper", "Astrid", "Sable", "Ivy"
+    ],
+    "surnames": [
+      "Shadowborn", "Nightwhisper", "Bloodmoon", "Darkclaw", "Stormchaser",
+      "Voidwalker", "Soulreaver", "Blackthorn", "Grimwood", "Ashenfell",
+      "Crowley", "Darkmore", "Nightshade", "Dreadmoor", "Hellsing"
+    ]
+  },
+  "startingStories": {
+    "sandbox": [
+      "Your faction has claimed an abandoned fortress in the borderlands. The structure is mostly ruined, but with effort, it could become a seat of power. Dark magic permeates the stones, and strange creatures lurk in the shadows. Your journey to dominance begins now.",
+      "Exiled from the capital for your forbidden practices, you've established a base in the forsaken quarter. The other factions watch with suspicion, but also fear. Here, in this lawless realm, you will build an empire of the damned.",
+      "A mysterious benefactor has granted you control of an ancient citadel. Its previous masters vanished mysteriously, leaving behind secrets and treasures. What lurks in the depths, and what price will you pay for power?"
+    ],
+    "campaign": [
+      "The Council of Five has fractured. War looms as each faction vies for supremacy. You, a rising warlord, must unite or conquer the other factions before the realm tears itself apart. But darker forces manipulate events from the shadows..."
+    ]
+  }
+}
