@@ -30,13 +30,21 @@ A text-based management RPG that fuses elements of dark fantasy, faction managem
   - Reputation and influence systems
   - Morale and corruption mechanics
 
-- **Transformation System**:
+- **Physical Body Part Transformation System**:
+  - 50+ unique body parts (ears, tails, wings, horns, claws, fangs, etc.)
+  - Combat defeat gives enemy body parts
+  - Species-specific parts for all 10 species
+  - Parts replace or stack based on type
+  - Permanent stat bonuses that accumulate
+  - Dynamic appearance descriptions
+  - Example: Lose to cat beast-kin → gain cat ears and tail
+  
+- **Transformation & Defeat System**:
   - Combat defeat transformations
-  - Species-specific transformations (61 unique types)
-  - Random encounters with transformation risks
-  - Permanent stat modifications
+  - Random encounters with transformation risks  
   - Corruption and personality changes
-  - NPC transformation on victory
+  - NPC transformation on victory (10% chance)
+  - Transformation probability based on enemy species and difficulty
 
 - **Encounter System**:
   - Random daily encounters
@@ -142,8 +150,10 @@ This is a community-driven project. Feel free to submit issues and pull requests
 
 - **[README.md](README.md)** - Main documentation (you are here)
 - **[QUICKSTART.md](QUICKSTART.md)** - Getting started guide
-- **[SPECIES_GUIDE.md](SPECIES_GUIDE.md)** - Complete species and subspecies reference
-- **[TRANSFORMATION_GUIDE.md](TRANSFORMATION_GUIDE.md)** - Transformation and defeat mechanics
+- **[SPECIES_GUIDE.md](SPECIES_GUIDE.md)** - Complete species and subspecies reference (10,000+ words)
+- **[TRANSFORMATION_GUIDE.md](TRANSFORMATION_GUIDE.md)** - Transformation and defeat mechanics (11,000+ words)
+- **[BODY_PARTS_GUIDE.md](BODY_PARTS_GUIDE.md)** - Physical body part transformations catalog (50+ parts)
+- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Complete feature list and project summary
 
 ## Roadmap
 
