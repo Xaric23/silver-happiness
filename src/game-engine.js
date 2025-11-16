@@ -31,19 +31,19 @@ export class GameEngine {
     /**
      * Start a new game
      */
-    newGame(mode, playerName, factionName) {
+    newGame(mode, playerName, factionName, gender = 'male', species = 'human', subspecies = null) {
         this.gameMode = mode;
         
         // Create player character
-        this.player = new Character(playerName, 'male', 'human');
+        this.player = new Character(playerName, gender, species, subspecies);
         this.player.isPlayer = true;
         
-        // Boost player stats slightly
-        this.player.stats.brawn = 7;
-        this.player.stats.intrigue = 7;
-        this.player.stats.arcane = 6;
-        this.player.stats.survival = 6;
-        this.player.stats.seduction = 6;
+        // Boost player stats slightly (on top of species modifiers)
+        this.player.stats.brawn += 2;
+        this.player.stats.intrigue += 2;
+        this.player.stats.arcane += 1;
+        this.player.stats.survival += 1;
+        this.player.stats.seduction += 1;
         
         // Create faction
         this.faction = new Faction(factionName);

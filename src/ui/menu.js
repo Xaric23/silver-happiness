@@ -73,11 +73,42 @@ export class MainMenu {
         console.log();
 
         const playerName = await prompt(this.rl, 'Enter your character name: ');
-        const factionName = await prompt(this.rl, 'Enter your faction name: ');
+        
+        // Choose gender
+        console.log('\nChoose your gender:');
+        console.log('1. Male');
+        console.log('2. Female');
+        console.log('3. Other');
+        const genderChoice = await prompt(this.rl, 'Choice: ');
+        const genders = ['male', 'female', 'other'];
+        const gender = genders[parseInt(genderChoice) - 1] || 'other';
+        
+        // Choose species
+        const { Species, SubSpecies } = await import('../models/character.js');
+        const speciesList = Object.keys(Species);
+        
+        console.log('\nChoose your species:');
+        speciesList.forEach((sp, idx) => {
+            console.log(`${idx + 1}. ${Species[sp]}`);
+        });
+        const speciesChoice = await prompt(this.rl, 'Choice: ');
+        const speciesKey = speciesList[parseInt(speciesChoice) - 1] || speciesList[0];
+        const species = Species[speciesKey];
+        
+        // Choose subspecies
+        const subspeciesList = SubSpecies[species] || ['common'];
+        console.log(`\nChoose your ${species} subspecies:`);
+        subspeciesList.forEach((sub, idx) => {
+            console.log(`${idx + 1}. ${sub}`);
+        });
+        const subspeciesChoice = await prompt(this.rl, 'Choice: ');
+        const subspecies = subspeciesList[parseInt(subspeciesChoice) - 1] || subspeciesList[0];
+        
+        const factionName = await prompt(this.rl, '\nEnter your faction name: ');
 
-        const gameData = this.engine.newGame(mode, playerName, factionName);
+        const gameData = this.engine.newGame(mode, playerName, factionName, gender, species, subspecies);
 
-        console.log(`\nWelcome, ${playerName}, leader of ${factionName}!`);
+        console.log(`\nWelcome, ${playerName}, ${subspecies} ${species} leader of ${factionName}!`);
         console.log('\nYour dark reign begins...');
         await prompt(this.rl, '\nPress Enter to continue...');
 
@@ -336,23 +367,90 @@ export class GameMenu {
     }
 
     async viewNPCs() {
-        console.clear();
-        console.log('='.repeat(60));
-        console.log('  NPCs');
-        console.log('='.repeat(60));
-        console.log();
-        
-        this.engine.npcs.forEach((npc, idx) => {
-            console.log(`${idx + 1}. ${npc.name} (${npc.species}, ${npc.role})`);
-            console.log(`   Stats: B:${npc.stats.brawn} I:${npc.stats.intrigue} A:${npc.stats.arcane} Su:${npc.stats.survival} Se:${npc.stats.seduction}`);
-            console.log(`   Relationship: ${npc.relationshipPlayer}`);
-            if (npc.assignedTask) {
-                console.log(`   Status: On mission (${npc.assignedTask})`);
-            }
+        while (true) {
+            console.clear();
+            console.log('='.repeat(60));
+            console.log('  NPCs');
+            console.log('='.repeat(60));
             console.log();
-        });
+            
+            this.engine.npcs.forEach((npc, idx) => {
+                console.log(`${idx + 1}. ${npc.name}`);
+                console.log(`   Species: ${npc.subspecies} ${npc.species} (${npc.gender})`);
+                console.log(`   Role: ${npc.role}`);
+                console.log(`   Stats: B:${npc.stats.brawn} I:${npc.stats.intrigue} A:${npc.stats.arcane} Su:${npc.stats.survival} Se:${npc.stats.seduction}`);
+                console.log(`   Relationship: ${npc.relationshipPlayer}`);
+                if (npc.assignedTask) {
+                    console.log(`   Status: On mission (${npc.assignedTask})`);
+                }
+                console.log();
+            });
+            
+            console.log('Actions:');
+            console.log('v. View NPC details');
+            console.log('r. Return');
+            console.log();
+            
+            const choice = await prompt(this.rl, 'Choose an action: ');
+            
+            if (choice === 'r') {
+                break;
+            } else if (choice === 'v') {
+                await this.viewNPCDetails();
+            }
+        }
+    }
+
+    async viewNPCDetails() {
+        const npcNum = await prompt(this.rl, 'Enter NPC number: ');
+        const idx = parseInt(npcNum) - 1;
         
-        await prompt(this.rl, 'Press Enter to continue...');
+        if (idx >= 0 && idx < this.engine.npcs.length) {
+            const npc = this.engine.npcs[idx];
+            
+            console.clear();
+            console.log('='.repeat(60));
+            console.log(`  ${npc.name}`);
+            console.log('='.repeat(60));
+            console.log();
+            console.log(`Species: ${npc.subspecies} ${npc.species}`);
+            console.log(`Gender: ${npc.gender}`);
+            console.log(`Role: ${npc.role}`);
+            console.log();
+            console.log('Stats:');
+            console.log(`  Brawn: ${npc.stats.brawn}`);
+            console.log(`  Intrigue: ${npc.stats.intrigue}`);
+            console.log(`  Arcane: ${npc.stats.arcane}`);
+            console.log(`  Survival: ${npc.stats.survival}`);
+            console.log(`  Seduction: ${npc.stats.seduction}`);
+            console.log();
+            console.log('Appearance:');
+            console.log(`  Height: ${npc.appearance.height}`);
+            console.log(`  Build: ${npc.appearance.build}`);
+            console.log(`  Hair: ${npc.appearance.hairColor}`);
+            console.log(`  Eyes: ${npc.appearance.eyeColor}`);
+            console.log(`  Skin: ${npc.appearance.skinTone}`);
+            console.log(`  Features: ${npc.appearance.features}`);
+            console.log();
+            console.log('Personality:');
+            console.log(`  Submissive: ${npc.personality.submissive}/100`);
+            console.log(`  Corruption: ${npc.personality.corruption}/100`);
+            console.log(`  Loyalty: ${npc.personality.loyalty}/100`);
+            console.log();
+            console.log(`Relationship with player: ${npc.relationshipPlayer}`);
+            
+            if (npc.transformations.length > 0) {
+                console.log();
+                console.log('Transformations:');
+                npc.transformations.forEach(t => {
+                    console.log(`  - ${t.name}: ${t.description}`);
+                });
+            }
+        } else {
+            console.log('\nInvalid NPC number.');
+        }
+        
+        await prompt(this.rl, '\nPress Enter to continue...');
     }
 
     async viewQuests() {
